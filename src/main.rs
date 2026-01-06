@@ -130,11 +130,15 @@ async fn main() -> eyre::Result<()> {
 
     let stream = audio::stream()?;
     let environment = ui::Environment::ready(&args)?;
-    let (mut player, mut tasks) = Player::init(args, stream.mixer())
+    let (mut player, tasks) = Player::init(args, stream.mixer())
         .await
         .inspect_err(|_| environment.cleanup(false).unwrap())?;
 
-    let result = tasks.wait(player.run()).await;
+    let result = tokio::select! {
+        r = player.run() => r,
+        r = tasks => r,
+    };
+
     environment.cleanup(result.is_ok())?;
     player.close().await?;
 
