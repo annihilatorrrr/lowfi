@@ -84,7 +84,7 @@ impl Window {
         // We're doing this because Windows is stupid and can't stand
         // writing to the last line repeatedly.
         #[cfg(windows)]
-        let (height, suffix) = (len + 3, linefeed);
+        let (height, suffix) = (len + 3, newline);
         #[cfg(not(windows))]
         let (height, suffix) = (len + 2, "");
 
