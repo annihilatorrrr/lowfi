@@ -333,13 +333,20 @@ impl Server {
             format!("lowfi.{}.instance{}", state.tracklist, process::id())
         };
 
+        // Filtered track list, since MPRIS objects don't like non-alphanumeric characters.
+        let tracklist: String = state
+            .tracklist
+            .chars()
+            .filter(|c| c.is_ascii_lowercase())
+            .collect();
+
         let server = mpris_server::Server::new(
             &suffix,
             Player {
                 sender: Sender::new(sender),
                 sink: state.sink,
                 current: ArcSwap::new(Arc::new(state.current)),
-                list: state.tracklist,
+                list: tracklist,
             },
         )
         .await?;
