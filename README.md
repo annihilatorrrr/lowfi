@@ -1,4 +1,9 @@
-# lowfi
+<picture>
+  <source media="(prefers-color-scheme: light)" srcset="./docs/media/header-black.svg">
+  <img src="./docs/media/header-white.svg" alt="lowfi logo">
+</picture>
+
+---
 
 [[Version française](./docs/fr/README.md)]
 
