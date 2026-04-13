@@ -11,7 +11,6 @@ use tokio::{
     io::AsyncWriteExt,
 };
 
-pub mod archive;
 pub mod chillhop;
 pub mod lofigirl;
 
@@ -19,7 +18,6 @@ pub mod lofigirl;
 #[derive(Clone, Copy, PartialEq, Eq, Debug, ValueEnum)]
 pub enum Source {
     Lofigirl,
-    Archive,
     Chillhop,
 }
 
@@ -28,7 +26,6 @@ impl Source {
     pub fn cache_dir(&self) -> &'static str {
         match self {
             Source::Lofigirl => "lofigirl",
-            Source::Archive => "archive",
             Source::Chillhop => "chillhop",
         }
     }
@@ -37,7 +34,6 @@ impl Source {
     pub fn url(&self) -> &'static str {
         match self {
             Source::Chillhop => "https://chillhop.com",
-            Source::Archive => "https://ia601004.us.archive.org/31/items/lofigirl",
             Source::Lofigirl => "https://lofigirl.com/wp-content/uploads",
         }
     }

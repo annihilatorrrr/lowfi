@@ -121,7 +121,6 @@ async fn main() -> eyre::Result<()> {
     if let Some(command) = &args.command {
         return match command {
             Commands::Scrape { source } => match source {
-                Source::Archive => scrapers::archive::scrape().await,
                 Source::Lofigirl => scrapers::lofigirl::scrape().await,
                 Source::Chillhop => scrapers::chillhop::scrape().await,
             },

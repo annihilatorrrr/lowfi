@@ -9,7 +9,7 @@ impl Clock {
     /// Small shorthand for getting the local time now, and formatting it.
     #[inline]
     fn now() -> chrono::format::DelayedFormat<chrono::format::StrftimeItems<'static>> {
-        chrono::Local::now().format("%H:%M:%S")
+        chrono::Local::now().format("%H:%M")
     }
 
     /// Checks if the last update was long enough ago, and if so,
