@@ -18,6 +18,8 @@ homepage = "https://github.com/talwat/lowfi"
 repository = "https://github.com/talwat/lowfi"
 
 [features]
+default = ["default-tracklist"]
+default-tracklist = []
 mpris = ["dep:mpris-server", "dep:arc-swap"]
 extra-audio-formats = ["rodio/default"]
 scrape = [

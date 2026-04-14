@@ -157,11 +157,15 @@ impl List {
     /// Reads a [List] from the filesystem using the CLI argument provided.
     pub async fn load(tracks: &str) -> tracks::Result<Self> {
         if tracks == "chillhop" {
+            #[cfg(feature = "default-tracklist")]
             return Ok(Self::new(
                 "chillhop",
                 include_str!("../../data/chillhop.txt"),
                 None,
             ));
+
+            #[cfg(not(feature = "default-tracklist"))]
+            return Err(tracks::error::Kind::NoTrackList.into());
         }
 
         // Check if the track is in ~/.local/share/lowfi, in which case we'll load that.
@@ -173,9 +177,7 @@ impl List {
         let raw = fs::read_to_string(path.clone()).await?;
 
         // Get rid of special noheader case for tracklists without a header.
-        let raw = raw
-            .strip_prefix("noheader")
-            .map_or_else(|| raw.as_ref(), |stripped| stripped);
+        let raw = raw.strip_prefix("noheader").unwrap_or_else(|| raw.as_ref());
 
         let name = path
             .file_stem()

@@ -11,6 +11,9 @@ pub enum Kind {
     #[error("invalid file path")]
     InvalidPath,
 
+    #[error("no track list specified! (default track list feature is disabled)")]
+    NoTrackList,
+
     #[error("unknown target track length")]
     UnknownLength,
 

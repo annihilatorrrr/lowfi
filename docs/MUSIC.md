@@ -48,20 +48,29 @@ that chillhop entirely bans third party players in their TOS. They also ban
 scrapers, which I only learned after writing one.
 
 So, is lowfi really going to have to violate the TOS of it's own music provider?
-Well, yes. I thought about it, and came to the conclusion that lowfi is probably
-not much of a threat for a few reasons.
+Well, yes. I thought about it, and came to the conclusion that this isn't *as bad*
+as it sounds for a few reasons.
 
 Firstly, it emulates exactly the behavior of chillhop's own radio player.
 The only difference is that one shoves you into a web browser, and the other,
-into a nice terminal window.
+into a nice terminal window. The fact that these are so functionally identical
+makes it a pretty unnoticeable difference.
 
 Then, I also realize that lowfi is just a small program used by few.
 I'm not making money on any of this, and I think degrading the experience for my
 fellow nerds who just want to listen to some lowfi without all the crap is not worth it.
 
-At the end of the day, lowfi has a distinct UserAgent. Should chillhop ever take issue with
-it's behavior, banning it is extremely simple. I don't want that to happen, but I
-understand if it does.
+At the end of the day, the lowfi player itself has a distinct UserAgent.
+Should chillhop ever take issue with it's behavior, banning it is extremely simple.
+I don't want that to happen, but I understand if it does.
+
+## For Distributions
+
+As of April, 2026, there is a new optional feature (`default-tracklist`) you can use to disable the
+default list entirely. It won't be shipped in the binary, or compiled at all. This should in theory
+resolve any issues of legality, but reality is complicated. If you maintain a distro, you have enough
+work on your hands already and don't need to worry about a silly music player which has
+some questionable sourcing practices.
 
 ## Well, *I* Hate the Chillhop Music
 
