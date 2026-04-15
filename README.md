@@ -20,7 +20,7 @@ by default are from [chillhop](https://chillhop.com/). Read
 
 ## Why?
 
-I really hate modern music platforms, and I wanted a small, simple  
+I really hate modern music platforms, and I wanted a small, simple
 app that would just play random ambient music without video and other fluff.
 
 Beyond that, it was also designed to be fairly resilient to inconsistent networks,
