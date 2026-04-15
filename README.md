@@ -33,11 +33,21 @@ and as such it buffers 5 whole songs at a time instead of parts of the same song
 > If you're interested in maintaining a package for `lowfi`
 > on package managers such as homebrew and the like, open an issue.
 
-### Dependencies
+### Methods
 
-You'll need Rust 1.83.0+.
+- [Cargo](#cargo)
+- [Release Binaries](#release-binaries)
+- [AUR](#aur)
+- [openSUSE](#opensuse)
+- [Debian and Ubuntu](#debian-and-ubuntu)
+- [Fedora (COPR)](#fedora-copr)
+- [Manual](#manual)
 
-On MacOS & Windows, no extra dependencies are needed.
+### Cargo
+
+Installing with cargo is universal, but carries a few dependencies with it.
+
+Firstly, you'll need Rust 1.83.0+. On MacOS & Windows, no extra dependencies are needed.
 
 On Linux, you'll also need openssl & alsa, as well as their headers.
 
@@ -46,9 +56,7 @@ On Linux, you'll also need openssl & alsa, as well as their headers.
 
 Make sure to also install `pulseaudio-alsa` if you're using PulseAudio.
 
-### Cargo
-
-The recommended installation method is to use cargo:
+Then, simply run:
 
 ```sh
 cargo install lowfi
@@ -205,7 +213,7 @@ If you are dealing with the 1% using another audio format which is in
 > Feel free to contribute your own list with a PR.
 
 lowfi also supports custom track lists, although the default one from chillhop
-is embedded into the binary.
+is embedded into the binary by default.
 
 To use a custom list, use the `--track-list` flag. This can either be a path to some file,
 or it could also be the name of a file (without the `.txt` extension) in the data
