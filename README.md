@@ -65,7 +65,7 @@ cargo install lowfi
 cargo install lowfi --features mpris
 ```
 
-and making sure `$HOME/.cargo/bin` is added to `$PATH`.
+And make sure `$HOME/.cargo/bin` is added to `$PATH`.
 Also see [Extra Features](#extra-features) for extended functionality.
 
 ### Release Binaries
