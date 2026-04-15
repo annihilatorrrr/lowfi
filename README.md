@@ -159,10 +159,11 @@ slightly tweak the UI or behavior of the menu. The flags can be viewed with `low
 | `-a`, `--alternate`                 | Use an alternate terminal screen                    |
 | `-m`, `--minimalist`                | Hide the bottom control bar                         |
 | `-b`, `--borderless`                | Exclude borders in UI                               |
+| `-c`, `--clock`                     | Include a clock                                     |
 | `-p`, `--paused`                    | Start lowfi paused                                  |
 | `-f`, `--fps`                       | FPS of the UI [default: 12]                         |
 | `--timeout`                         | Timeout in seconds for music downloads [default: 3] |
-| `-d`, `--debug`                     | Include ALSA & other logs                           |
+| `-d`, `--debug`                     | Include ALSA & other logs meant for debugging       |
 | `-w`, `--width <WIDTH>`             | Width of the player, from 0 to 32 [default: 3]      |
 | `-t`, `--track-list <TRACK_LIST>`   | Use a [custom track list](#custom-track-lists)      |
 | `-s`, `--buffer-size <BUFFER_SIZE>` | Internal song buffer size [default: 5]              |
@@ -231,7 +232,7 @@ Each track will be first appended to the header, and then use the combination to
 the track.
 
 > [!NOTE]
-> lowfi *will not* put a `/` between the base & track for added flexibility,
+> lowfi _will not_ put a `/` between the base & track for added flexibility,
 > so for most cases you should have a trailing `/` in your header.
 
 The exception to this is if the track name begins with a protocol like `https://`,
