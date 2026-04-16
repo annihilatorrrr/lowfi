@@ -152,15 +152,13 @@ impl List {
                 .ok_or(tracks::error::Kind::InvalidName)?,
         };
 
-        let name = name;
-
         Ok(Self::new(name, &text, path.to_str()))
     }
 
     /// Parses text into a [List].
     pub fn new(name: &str, text: &str, path: Option<&str>) -> Self {
         // Get rid of special noheader case for tracklists without a header.
-        let text = text.strip_prefix("noheader").unwrap_or_else(|| text);
+        let text = text.strip_prefix("noheader").unwrap_or(text);
 
         let lines: Vec<String> = text
             .trim_end()
@@ -183,8 +181,8 @@ impl List {
             .join(format!("{tracks}.txt"));
 
         if path.exists() {
-            return Ok(Self::from_file(path, Some(tracks)).await?);
-        };
+            return Self::from_file(path, Some(tracks)).await;
+        }
 
         if tracks == "chillhop" {
             #[cfg(feature = "default-tracklist")]
@@ -198,6 +196,6 @@ impl List {
             return Err(tracks::error::Kind::NoTrackList.into());
         }
 
-        Ok(Self::from_file(tracks, None).await?)
+        Self::from_file(tracks, None).await
     }
 }
