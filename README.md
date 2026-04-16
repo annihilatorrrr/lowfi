@@ -33,7 +33,9 @@ and as such it buffers 5 whole songs at a time instead of parts of the same song
 > If you're interested in maintaining a package for `lowfi`
 > on package managers such as homebrew and the like, open an issue.
 
-[![Packaging status](https://repology.org/badge/vertical-allrepos/lowfi.svg)](https://repology.org/project/lowfi/versions)
+<a href="https://repology.org/project/lowfi/versions">
+    <img src="https://repology.org/badge/vertical-allrepos/lowfi.svg" alt="Packaging status" align="right">
+</a>
 
 ### Methods
 
