@@ -1,7 +1,7 @@
 //! The module containing all of the logic behind track lists,
 //! as well as obtaining track names & downloading the raw audio data
 
-use std::cmp::min;
+use std::{cmp::min, path::Path};
 
 use bytes::{BufMut as _, Bytes, BytesMut};
 use futures_util::StreamExt as _;
@@ -139,8 +139,29 @@ impl List {
         Queued::new(path, data, display)
     }
 
+    /// Reads a file and parses it into a list.
+    pub async fn from_file(path: impl AsRef<Path>, name: Option<&str>) -> tracks::Result<Self> {
+        let path = path.as_ref();
+        let text = fs::read_to_string(path).await?;
+
+        let name = match name {
+            Some(name) => name,
+            None => path
+                .file_stem()
+                .and_then(|x| x.to_str())
+                .ok_or(tracks::error::Kind::InvalidName)?,
+        };
+
+        let name = name;
+
+        Ok(Self::new(name, &text, path.to_str()))
+    }
+
     /// Parses text into a [List].
     pub fn new(name: &str, text: &str, path: Option<&str>) -> Self {
+        // Get rid of special noheader case for tracklists without a header.
+        let text = text.strip_prefix("noheader").unwrap_or_else(|| text);
+
         let lines: Vec<String> = text
             .trim_end()
             .lines()
@@ -156,6 +177,15 @@ impl List {
 
     /// Reads a [List] from the filesystem using the CLI argument provided.
     pub async fn load(tracks: &str) -> tracks::Result<Self> {
+        // Check if the track is in ~/.local/share/lowfi, in which case we'll load that.
+        let path = data_dir()
+            .map_err(|_| error::Kind::InvalidPath)?
+            .join(format!("{tracks}.txt"));
+
+        if path.exists() {
+            return Ok(Self::from_file(path, Some(tracks)).await?);
+        };
+
         if tracks == "chillhop" {
             #[cfg(feature = "default-tracklist")]
             return Ok(Self::new(
@@ -168,23 +198,6 @@ impl List {
             return Err(tracks::error::Kind::NoTrackList.into());
         }
 
-        // Check if the track is in ~/.local/share/lowfi, in which case we'll load that.
-        let path = data_dir()
-            .map_err(|_| error::Kind::InvalidPath)?
-            .join(format!("{tracks}.txt"));
-        let path = if path.exists() { path } else { tracks.into() };
-
-        let raw = fs::read_to_string(path.clone()).await?;
-
-        // Get rid of special noheader case for tracklists without a header.
-        let raw = raw.strip_prefix("noheader").unwrap_or_else(|| raw.as_ref());
-
-        let name = path
-            .file_stem()
-            .and_then(|x| x.to_str())
-            .ok_or(tracks::error::Kind::InvalidName)
-            .track(tracks)?;
-
-        Ok(Self::new(name, raw, path.to_str()))
+        Ok(Self::from_file(tracks, None).await?)
     }
 }
