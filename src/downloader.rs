@@ -5,7 +5,7 @@ use std::{
     time::Duration,
 };
 
-use crate::tracks;
+use crate::{tracks, ui::interface::Logger};
 use reqwest::Client;
 use tokio::sync::mpsc;
 
@@ -68,20 +68,60 @@ pub struct Downloader {
     /// The list of tracks to download from.
     tracks: tracks::List,
 
+    /// Whether to log more debug information.
+    debug: bool,
+
     /// The [`reqwest`] client to use for downloads.
     client: Client,
 
     /// The RNG generator to use.
     rng: fastrand::Rng,
+
+    /// Logger, to report any download errors to the UI.
+    logger: Logger,
 }
 
 impl Downloader {
+    /// Handles an error encountered by the downloader.
+    ///
+    /// If the error isn't a timeout, it will also stall for some arbitrary error timeout.
+    async fn handle_error(&mut self, error: tracks::Error) -> crate::Result<()> {
+        const ERROR_TIMEOUT: Duration = Duration::from_secs(1);
+
+        PROGRESS.store(0, atomic::Ordering::Relaxed);
+
+        let track_suffix = if let Some(x) = error.track.as_ref() {
+            format!(" track: {x}")
+        } else {
+            String::new()
+        };
+
+        match &error.kind {
+            tracks::error::Kind::Request(x) => {
+                if let Some(status) = x.status() {
+                    let message =
+                        format!("track list error code: {}{track_suffix}", status.as_u16());
+                    self.logger.info(message).await?;
+                }
+            }
+            error if self.debug => {
+                let message = format!("debug: error: {}{track_suffix}", error);
+                self.logger.info(message).await?;
+            }
+            _ => {}
+        }
+
+        if !error.timeout() {
+            tokio::time::sleep(ERROR_TIMEOUT).await;
+        }
+
+        Ok(())
+    }
+
     /// Actually runs the downloader, consuming it and beginning
     /// the cycle of downloading tracks and reporting to the
     /// rest of the program.
     async fn run(mut self) -> crate::Result<()> {
-        const ERROR_TIMEOUT: Duration = Duration::from_secs(1);
-
         loop {
             let result = self
                 .tracks
@@ -90,18 +130,19 @@ impl Downloader {
 
             match result {
                 Ok(track) => {
+                    if self.debug {
+                        self.logger
+                            .info(format!("debug: adding {} to queue", track.display))
+                            .await?;
+                    }
+
                     self.queue.send(track).await?;
                     if LOADING.load(atomic::Ordering::Relaxed) {
                         self.tx.send(crate::Message::Loaded).await?;
                         LOADING.store(false, atomic::Ordering::Relaxed);
                     }
                 }
-                Err(error) => {
-                    PROGRESS.store(0, atomic::Ordering::Relaxed);
-                    if !error.timeout() {
-                        tokio::time::sleep(ERROR_TIMEOUT).await;
-                    }
-                }
+                Err(error) => self.handle_error(error).await?,
             }
         }
     }
@@ -146,8 +187,8 @@ impl crate::Tasks {
     /// `tx` specifies the [`Sender`] to be notified with [`crate::Message::Loaded`].
     pub fn downloader(
         &mut self,
-        size: usize,
-        timeout: u64,
+        args: &crate::Args,
+        logger: Logger,
         tracks: tracks::List,
     ) -> crate::Result<Handle> {
         let client = Client::builder()
@@ -156,11 +197,13 @@ impl crate::Tasks {
                 "/",
                 env!("CARGO_PKG_VERSION")
             ))
-            .timeout(Duration::from_secs(timeout))
+            .timeout(Duration::from_secs(args.timeout))
             .build()?;
 
-        let (qtx, qrx) = mpsc::channel(size - 1);
+        let (qtx, qrx) = mpsc::channel(args.buffer_size as usize - 1);
         let downloader = Downloader {
+            debug: args.debug,
+            logger,
             queue: qtx,
             tx: self.tx(),
             tracks,
