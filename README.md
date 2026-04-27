@@ -30,11 +30,11 @@ and as such it buffers 5 whole songs at a time instead of parts of the same song
 
 > [!NOTE]
 >
-> If you're interested in maintaining a package for `lowfi`
-> on package managers such as homebrew and the like, open an issue.
+> Distro repositories may be slightly behind cargo, but lowfi is not security critical
+> so they are still perfectly fine to use.
 
 <a href="https://repology.org/project/lowfi/versions">
-    <img src="https://repology.org/badge/vertical-allrepos/lowfi.svg" alt="Packaging status" align="right">
+  <img src="https://repology.org/badge/vertical-allrepos/lowfi.svg" alt="Packaging status" align="right">
 </a>
 
 ### Methods
